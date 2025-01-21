@@ -88,44 +88,89 @@ def stream_bible_response(user_query):
 
 # ✅ 질문 리스트 (150개)
 question_pool = [
-    "하나님이 정말 나를 사랑하시는지 어떻게 확신할 수 있을까요?",
-    "기도해도 응답이 없을 때 어떻게 해야 할까요?",
-    "믿음이 흔들릴 때 성경에서 어떤 말씀을 붙잡아야 할까요?",
-    "삶이 너무 고통스러울 때 하나님께서 주시는 위로의 말씀은 무엇인가요?",
-    "사람들에게 배신당했을 때 성경에서는 어떻게 하라고 하나요?",
-    "가족과의 갈등을 해결하는 성경적인 방법이 있을까요?",
-    "어려운 상황에서도 감사하는 마음을 가질 수 있을까요?",
-    "앞으로 어떤 길을 선택해야 할지 모를 때 어떻게 기도해야 할까요?",
-    "세상에서 그리스도인으로 살아가는 것이 쉽지 않을 때 어떻게 해야 할까요?",
-    "기도가 습관이 되지 않을 때 어떻게 해야 할까요?",
-    # 추가 질문 140개 생략
+    # 🔹 인간관계 고민
+    "가족과의 갈등을 어떻게 풀어야 할까요?",
+    "친구에게 상처를 받았을 때 어떻게 하면 좋을까요?",
+    "배신당한 기분에서 벗어나려면 어떻게 해야 할까요?",
+    "사람들에게 쉽게 마음을 열지 못하는데, 어떻게 하면 좋을까요?",
+    "연인과의 관계에서 신뢰가 깨졌을 때 어떻게 해야 할까요?",
+    "누군가를 용서하는 게 너무 어려운데, 방법이 있을까요?",
+    "내가 너무 의존적인 관계를 맺고 있는 건 아닐까요?",
+    "진정한 친구를 찾는 게 너무 어려워요.",
+    "부모님과의 가치관 차이로 힘들 때 어떻게 해야 할까요?",
+    "혼자가 편한데, 그래도 사람을 만나야 할까요?",
+
+    # 🔹 삶의 방향 & 미래 고민
+    "내가 지금 가고 있는 길이 맞는 걸까요?",
+    "하고 싶은 일이 없는데, 어떻게 살아가야 할까요?",
+    "꿈이 없어서 고민이에요. 어떻게 찾을 수 있을까요?",
+    "무언가를 시작하는 게 두려워요. 어떻게 극복할 수 있을까요?",
+    "실패가 두려워서 도전하지 못하고 있어요.",
+    "나이는 계속 먹는데, 아직도 내 자리를 못 찾았어요.",
+    "다른 사람들과 비교하는 게 힘들어요.",
+    "내 삶이 의미 없는 것처럼 느껴질 때 어떻게 해야 할까요?",
+    "늘 똑같은 일상이 반복되는데, 이대로 괜찮을까요?",
+    "미래가 불안할 때 마음을 다스리는 법이 있을까요?",
+
+    # 🔹 감정 & 내면 고민
+    "내 감정을 컨트롤하는 게 어려워요.",
+    "늘 우울하고 무기력한데, 어떻게 해야 할까요?",
+    "나 자신을 사랑하는 방법을 알고 싶어요.",
+    "자존감이 낮아서 힘들어요.",
+    "늘 죄책감을 느끼며 살아가고 있어요.",
+    "혼자 있는 시간이 너무 외롭게 느껴져요.",
+    "사람들 앞에서 나를 숨기고 사는 것 같아요.",
+    "완벽해야 한다는 부담감에서 벗어나고 싶어요.",
+    "늘 다른 사람들에게 맞추며 사는 게 지쳐요.",
+    "마음의 평화를 찾는 방법이 있을까요?",
+
+    # 🔹 일 & 돈 고민
+    "지금 하는 일이 나에게 맞지 않는 것 같아요.",
+    "내가 하고 싶은 일과 현실 사이에서 고민돼요.",
+    "돈 걱정 없이 사는 방법이 있을까요?",
+    "노력해도 성과가 없을 때 어떻게 해야 할까요?",
+    "직장에서 인정받지 못하는 기분이에요.",
+    "퇴사하고 싶지만, 현실적으로 어려워요.",
+    "일과 삶의 균형을 어떻게 맞출 수 있을까요?",
+    "돈을 벌기 위해 하기 싫은 일을 해야 할까요?",
+    "경제적 불안감을 극복하는 방법이 있을까요?",
+    "내가 하고 싶은 일로 먹고 살 수 있을까요?",
+
+    # 🔹 외로움 & 인간관계 공허함
+    "외로움을 극복하는 방법이 있을까요?",
+    "아무도 나를 이해해 주지 않는 것 같아요.",
+    "관계에서 오는 상처가 반복될 때 어떻게 해야 할까요?",
+    "누군가에게 의지하고 싶은데, 방법을 모르겠어요.",
+    "내 이야기를 진심으로 들어주는 사람이 없어요.",
+    "사람들에게 상처받지 않고 사는 방법이 있을까요?",
+    "다들 행복해 보이는데, 나만 그런 게 아닌 것 같아요.",
+    "혼자 있는 시간을 즐길 수 있는 방법이 있을까요?",
+    "늘 남들에게 맞춰주는 관계가 힘들어요.",
+    "누군가에게 진짜 내 마음을 표현하는 게 어려워요."
 ]
 
 # ✅ 현재 표시할 질문 리스트 (세 개씩 랜덤 출력)
 if "question_list" not in st.session_state or not st.session_state.question_list:
-    st.session_state.question_list = random.sample(question_pool, 3)
+    st.session_state.question_list = random.sample(question_pool, 9)
 
 # ✅ 채팅 UI 출력 (이전 대화 유지)
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 # ✅ 자연어 입력 필드 추가
-st.subheader("📌 궁금한 내용을 입력하거나 질문을 선택하세요.")
+st.subheader("📌 신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
+
 
 user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
 
 # ✅ 버튼 클릭 시 자동 입력 + 질문 변경
 selected_question = None
-col1, col2, col3 = st.columns(3)
-with col1:
-    if st.button(st.session_state.question_list[0], use_container_width=True):
-        selected_question = st.session_state.question_list[0]
-with col2:
-    if st.button(st.session_state.question_list[1], use_container_width=True):
-        selected_question = st.session_state.question_list[1]
-with col3:
-    if st.button(st.session_state.question_list[2], use_container_width=True):
-        selected_question = st.session_state.question_list[2]
+
+cols = st.columns(3)  # 👉 3열 배치 (총 9개 질문 버튼)
+for i, q in enumerate(st.session_state.question_list):
+    with cols[i % 3]:  # 3개씩 나눠서 정렬
+        if st.button(q, use_container_width=True):
+            selected_question = q
 
 # ✅ 질문 선택 또는 자연어 입력 시 응답 시작
 if selected_question or user_input:
@@ -138,4 +183,4 @@ if selected_question or user_input:
         st.write_stream(stream_bible_response(user_query))
 
     # ✅ 새로운 질문 리스트 업데이트 (이전 대화 삭제 없음)
-    st.session_state.question_list = random.sample(question_pool, 3)
+    st.session_state.question_list = random.sample(question_pool, 9)
