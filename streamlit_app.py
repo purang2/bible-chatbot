@@ -37,23 +37,18 @@ def stream_bible_response(user_query):
             *st.session_state.messages,
             {"role": "user", "content": user_query}
         ],
-        max_tokens=700,
+        max_tokens=200,
         temperature=0.65,
         stream=True
     )
 
-    response_container = st.empty()
-    streamed_text = ""
-
+    # ✅ 제너레이터 함수로 응답 반환
     for chunk in response:
         if hasattr(chunk, "choices") and chunk.choices:
             delta = chunk.choices[0].delta
             if hasattr(delta, "content") and delta.content:
-                streamed_text += delta.content
-
-                formatted_text = "\n".join([streamed_text[i:i+50] for i in range(0, len(streamed_text), 50)])
-                response_container.write(formatted_text)
-                time.sleep(0.02)
+                yield delta.content  # ✅ 한 줄씩 반환
+                time.sleep(0.02)  # ✅ 응답 속도 조절
 
     # ✅ 응답 저장
     st.session_state.messages.append({"role": "assistant", "content": streamed_text})
