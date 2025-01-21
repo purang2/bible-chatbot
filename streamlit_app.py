@@ -3,6 +3,9 @@ from openai import OpenAI
 import time
 import random
 
+
+# ✅ Streamlit 설정
+st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
 # ✅ Pretendard 폰트 적용 (CSS 삽입)
 st.markdown("""
     <style>
@@ -33,8 +36,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ✅ Streamlit 설정
-st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
 
 # ✅ Bible AI Chatbot 주요 특징 강조
 st.title("📖 Bible AI Chatbot")
