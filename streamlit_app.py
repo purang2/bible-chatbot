@@ -1,28 +1,44 @@
+
 import streamlit as st
 from openai import OpenAI
 
 # Streamlit 설정
-st.set_page_config(page_title="Bible AI Chatbot", page_icon="📖")
+st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
+
+# ✅ Bible AI Chatbot 주요 특징 강조
 st.title("📖 Bible AI Chatbot")
-st.write("A chatbot that provides Bible verses with insights. (Supports Korean input)")
+st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **성경 구절 정확성** | ✅ **한국어 지원**")
 
 # OpenAI API 설정
-client = OpenAI(api_key=st.secrets["chatgpt"])
+openai_api_key = st.secrets["chatgpt"]
+client = OpenAI(api_key=openai_api_key)
 
-# ✅ 대화 이력 저장 (채팅 UI를 위해 세션 상태 사용)
+# ✅ 대화 이력 저장
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "안녕하세요! 성경 말씀을 찾아드리는 Bible AI Chatbot입니다. 무엇이든 물어보세요. 🙏"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 성경 말씀을 찾아드리는 Bible AI Chatbot입니다. 무엇이든 물어보세요. 🙏"}]
 
 # ✅ 채팅 UI 출력 (이전 대화 표시)
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
 
-# ✅ 사용자 입력 받기 (챗봇 입력 필드 사용)
-if user_input := st.chat_input("✍️ 질문을 입력하세요 (예: 인내에 대한 성경 말씀은?)"):
-    st.session_state.messages.append({"role": "user", "content": user_input})
+# ✅ 구글 검색창 스타일 UX (중앙 정렬, 포커스)
+st.markdown(
+    """
+    <style>
+        .stChatInput div div textarea {
+            text-align: center;
+            font-size: 1.2em;
+            padding: 10px;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ✅ 사용자 입력 받기
+if prompt := st.chat_input("📖 성경에서 답을 찾으세요. (예: 인내에 대한 성경 말씀은?)"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    st.chat_message("user").write(prompt)
 
     # ✅ AI 응답 생성 (스트리밍 지원)
     with st.chat_message("assistant"):
@@ -45,16 +61,15 @@ if user_input := st.chat_input("✍️ 질문을 입력하세요 (예: 인내에
                 stream=True  # ✅ 스트리밍 응답 활성화
             )
 
-            # ✅ 스트리밍 응답 출력 (점진적으로 표시)
+            # ✅ 스트리밍 응답 표시
             streamed_text = ""
-            for no, chunk in enumerate(response, start=1):
+            for chunk in response:
                 if chunk.choices and chunk.choices[0].delta.get("content"):
                     streamed_text += chunk.choices[0].delta["content"]
-                    st.markdown(streamed_text)  # 실시간으로 업데이트
+                    st.write(streamed_text)  # 실시간으로 업데이트
 
             # ✅ 최종 응답 저장
             st.session_state.messages.append({"role": "assistant", "content": streamed_text})
 
-# 푸터
-st.markdown("---")
-st.markdown("💡 *Powered by GPT-4o | Bible AI Chatbot*")
+
+
