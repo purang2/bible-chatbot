@@ -42,16 +42,18 @@ def stream_bible_response(user_query):
         stream=True
     )
 
-    # ✅ 제너레이터 함수로 응답 반환
+    full_response = ""  # 전체 응답 저장
+
     for chunk in response:
         if hasattr(chunk, "choices") and chunk.choices:
             delta = chunk.choices[0].delta
             if hasattr(delta, "content") and delta.content:
+                full_response += delta.content
                 yield delta.content  # ✅ 한 줄씩 반환
                 time.sleep(0.02)  # ✅ 응답 속도 조절
 
-    # ✅ 응답 저장
-    st.session_state.messages.append({"role": "assistant", "content": streamed_text})
+    # ✅ 응답 저장 (이제 입력이 다시 가능함)
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 # ✅ 심화된 질문 리스트 (150개)
 question_pool = [
@@ -100,5 +102,8 @@ if selected_question or user_input:
     with st.chat_message("assistant"):
         st.write_stream(stream_bible_response(user_query))
 
-    # ✅ 새로운 질문 리스트 업데이트 (새로운 세 개의 질문을 무작위 선택)
+    # ✅ 새로운 질문 리스트 업데이트 (답변이 끝난 후에도 질문 선택 가능)
     st.session_state.question_list = random.sample(question_pool, 3)
+
+    # ✅ 입력창을 다시 활성화 (사용자가 다시 질문할 수 있도록)
+    st.rerun()
