@@ -3,14 +3,44 @@ from openai import OpenAI
 import time
 import random
 
-# Streamlit 설정
+# ✅ Pretendard 폰트 적용 (CSS 삽입)
+st.markdown("""
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/Pretendard/dist/web/static/pretendard.css');
+
+        * {
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        /* 채팅 메시지 스타일 */
+        .stChatMessage {
+            font-family: 'Pretendard', sans-serif !important;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* 입력창 스타일 */
+        .stTextInput input {
+            font-family: 'Pretendard', sans-serif !important;
+            font-size: 14px;
+        }
+
+        /* 버튼 스타일 */
+        .stButton > button {
+            font-family: 'Pretendard', sans-serif !important;
+            font-size: 14px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# ✅ Streamlit 설정
 st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
 
 # ✅ Bible AI Chatbot 주요 특징 강조
 st.title("📖 Bible AI Chatbot")
 st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**")
 
-# OpenAI API 설정
+# ✅ OpenAI API 설정
 openai_api_key = st.secrets["chatgpt"]
 client = OpenAI(api_key=openai_api_key)
 
