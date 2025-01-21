@@ -44,10 +44,18 @@ st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ 
 # ✅ OpenAI API 설정
 openai_api_key = st.secrets["chatgpt"]
 client = OpenAI(api_key=openai_api_key)
+# ✅ 닉네임 설정 (최초 실행 시 입력 가능)
+if "nickname" not in st.session_state:
+    st.session_state.nickname = st.text_input("닉네임을 입력하세요:", value="성도님")
 
-# ✅ 대화 이력 저장 (시스템 메시지 제거)
+USER_NICKNAME = st.session_state.nickname  # 사용자 닉네임 저장
+USER_AVATAR = "👤"  # 사용자 아이콘 (URL 가능)
+AI_AVATAR = "📖"  # AI 아이콘 (URL 가능)
+
+# ✅ 대화 이력 저장
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
 
 # ✅ AI 응답 스트리밍 함수
 def stream_bible_response(user_query):
@@ -153,9 +161,15 @@ question_pool = [
 if "question_list" not in st.session_state or not st.session_state.question_list:
     st.session_state.question_list = random.sample(question_pool, 9)
 
+
 # ✅ 채팅 UI 출력 (이전 대화 유지)
 for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+    if msg["role"] == "user":
+        st.chat_message("user", avatar=USER_AVATAR).write(f"**[{USER_NICKNAME}]** {msg['content']}")
+    else:
+        st.chat_message("assistant", avatar=AI_AVATAR).write(f"**[한줄성경]** {msg['content']}")
+
+
 
 # ✅ 자연어 입력 필드 추가
 st.subheader("📌 신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
