@@ -37,9 +37,9 @@ def stream_bible_response(user_query):
             *st.session_state.messages,
             {"role": "user", "content": user_query}
         ],
-        max_tokens=200,
+        max_tokens=700,
         temperature=0.65,
-        stream=True
+        stream=True  # ✅ 스트리밍 활성화
     )
 
     full_response = ""  # 전체 응답 저장
@@ -52,10 +52,10 @@ def stream_bible_response(user_query):
                 yield delta.content  # ✅ 한 줄씩 반환
                 time.sleep(0.02)  # ✅ 응답 속도 조절
 
-    # ✅ 응답 저장 (이제 입력이 다시 가능함)
+    # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# ✅ 심화된 질문 리스트 (150개)
+# ✅ 질문 리스트 (150개)
 question_pool = [
     "하나님이 정말 나를 사랑하시는지 어떻게 확신할 수 있을까요?",
     "기도해도 응답이 없을 때 어떻게 해야 할까요?",
@@ -67,17 +67,21 @@ question_pool = [
     "앞으로 어떤 길을 선택해야 할지 모를 때 어떻게 기도해야 할까요?",
     "세상에서 그리스도인으로 살아가는 것이 쉽지 않을 때 어떻게 해야 할까요?",
     "기도가 습관이 되지 않을 때 어떻게 해야 할까요?",
-    # 추가 질문 140개 생략 (위에서 제공한 리스트 활용)
+    # 추가 질문 140개 생략
 ]
+
+# ✅ 현재 표시할 질문 리스트 (세 개씩 랜덤 출력)
+if "question_list" not in st.session_state or not st.session_state.question_list:
+    st.session_state.question_list = random.sample(question_pool, 3)
+
+# ✅ 채팅 UI 출력 (이전 대화 유지)
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
 
 # ✅ 자연어 입력 필드 추가
 st.subheader("📌 궁금한 내용을 입력하거나 질문을 선택하세요.")
 
 user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
-
-# ✅ 현재 표시할 질문 리스트 (세 개씩 랜덤 출력)
-if "question_list" not in st.session_state or not st.session_state.question_list:
-    st.session_state.question_list = random.sample(question_pool, 3)
 
 # ✅ 버튼 클릭 시 자동 입력 + 질문 변경
 selected_question = None
@@ -98,12 +102,9 @@ if selected_question or user_input:
     st.session_state.messages.append({"role": "user", "content": user_query})
     st.chat_message("user").write(user_query)
 
-    # ✅ AI 응답 스트리밍 시작
+    # ✅ AI 응답 스트리밍 시작 (이전 대화 삭제 없이 유지)
     with st.chat_message("assistant"):
         st.write_stream(stream_bible_response(user_query))
 
-    # ✅ 새로운 질문 리스트 업데이트 (답변이 끝난 후에도 질문 선택 가능)
+    # ✅ 새로운 질문 리스트 업데이트 (이전 대화 삭제 없음)
     st.session_state.question_list = random.sample(question_pool, 3)
-
-    # ✅ 입력창을 다시 활성화 (사용자가 다시 질문할 수 있도록)
-    st.rerun()
