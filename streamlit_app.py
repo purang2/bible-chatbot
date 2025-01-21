@@ -18,10 +18,6 @@ client = OpenAI(api_key=openai_api_key)
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ✅ 채팅 UI 출력 (이전 대화 표시)
-for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
-
 # ✅ AI 응답 스트리밍 함수
 def stream_bible_response(user_query):
     response = client.chat.completions.create(
@@ -38,57 +34,76 @@ def stream_bible_response(user_query):
                 "4. 기독교적 존중을 담아 '성도님', '주님께서는...' 등의 표현을 활용하라.\n"
                 "5. 출처가 명확하지 않을 경우, 대표적인 구절(예: '시편 23편')을 추천하라."
             )},
-            *st.session_state.messages,  # 기존 대화 내역 추가
+            *st.session_state.messages,
             {"role": "user", "content": user_query}
         ],
         max_tokens=700,
         temperature=0.65,
-        stream=True  # ✅ 스트리밍 응답 활성화
+        stream=True
     )
 
-    # ✅ `st.write_stream()`을 활용한 자연스러운 스트리밍
+    response_container = st.empty()
     streamed_text = ""
+
     for chunk in response:
         if hasattr(chunk, "choices") and chunk.choices:
             delta = chunk.choices[0].delta
             if hasattr(delta, "content") and delta.content:
                 streamed_text += delta.content
-                yield streamed_text  # 한 단어씩 반환하여 Streamlit에 표시
-                time.sleep(0.02)  # 속도 조절
 
-    # ✅ 응답 저장 (채팅 내역 유지)
+                formatted_text = "\n".join([streamed_text[i:i+50] for i in range(0, len(streamed_text), 50)])
+                response_container.write(formatted_text)
+                time.sleep(0.02)
+
+    # ✅ 응답 저장
     st.session_state.messages.append({"role": "assistant", "content": streamed_text})
 
-# ✅ 예상 질문 (계속 바뀌도록 랜덤 리스트 적용)
+# ✅ 심화된 질문 리스트 (150개)
 question_pool = [
-    "인내에 대한 성경 말씀은 무엇인가요?",
-    "두려움을 극복하는 방법은?",
-    "하나님의 사랑을 느낄 수 있는 성경 구절이 있나요?",
-    "슬플 때 위로가 되는 성경 말씀을 알려주세요.",
-    "하나님을 신뢰하는 법에 대해 알려주세요.",
-    "어려운 시기를 겪을 때 읽으면 좋은 성경 구절이 있나요?",
-    "평안함을 얻기 위한 성경 말씀은 무엇인가요?",
+    "하나님이 정말 나를 사랑하시는지 어떻게 확신할 수 있을까요?",
+    "기도해도 응답이 없을 때 어떻게 해야 할까요?",
+    "믿음이 흔들릴 때 성경에서 어떤 말씀을 붙잡아야 할까요?",
+    "삶이 너무 고통스러울 때 하나님께서 주시는 위로의 말씀은 무엇인가요?",
+    "사람들에게 배신당했을 때 성경에서는 어떻게 하라고 하나요?",
+    "가족과의 갈등을 해결하는 성경적인 방법이 있을까요?",
+    "어려운 상황에서도 감사하는 마음을 가질 수 있을까요?",
+    "앞으로 어떤 길을 선택해야 할지 모를 때 어떻게 기도해야 할까요?",
+    "세상에서 그리스도인으로 살아가는 것이 쉽지 않을 때 어떻게 해야 할까요?",
+    "기도가 습관이 되지 않을 때 어떻게 해야 할까요?",
+    # 추가 질문 140개 생략 (위에서 제공한 리스트 활용)
 ]
 
-# ✅ 현재 표시할 질문 리스트 (세 개씩 보여주기)
+# ✅ 자연어 입력 필드 추가
+st.subheader("📌 궁금한 내용을 입력하거나 질문을 선택하세요.")
+
+user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
+
+# ✅ 현재 표시할 질문 리스트 (세 개씩 랜덤 출력)
 if "question_list" not in st.session_state or not st.session_state.question_list:
     st.session_state.question_list = random.sample(question_pool, 3)
 
 # ✅ 버튼 클릭 시 자동 입력 + 질문 변경
-st.subheader("📌 궁금한 내용을 선택하세요:")
 selected_question = None
-for q in st.session_state.question_list:
-    if st.button(q, use_container_width=True):
-        selected_question = q
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.button(st.session_state.question_list[0], use_container_width=True):
+        selected_question = st.session_state.question_list[0]
+with col2:
+    if st.button(st.session_state.question_list[1], use_container_width=True):
+        selected_question = st.session_state.question_list[1]
+with col3:
+    if st.button(st.session_state.question_list[2], use_container_width=True):
+        selected_question = st.session_state.question_list[2]
 
-# ✅ 질문 선택 시 응답 시작 + 질문 리스트 업데이트
-if selected_question:
-    st.session_state.messages.append({"role": "user", "content": selected_question})
-    st.chat_message("user").write(selected_question)
+# ✅ 질문 선택 또는 자연어 입력 시 응답 시작
+if selected_question or user_input:
+    user_query = selected_question if selected_question else user_input
+    st.session_state.messages.append({"role": "user", "content": user_query})
+    st.chat_message("user").write(user_query)
 
     # ✅ AI 응답 스트리밍 시작
     with st.chat_message("assistant"):
-        st.write_stream(stream_bible_response(selected_question))
+        st.write_stream(stream_bible_response(user_query))
 
-    # ✅ 새로운 질문 리스트 업데이트 (사용자가 볼 때 질문이 계속 바뀜)
+    # ✅ 새로운 질문 리스트 업데이트 (새로운 세 개의 질문을 무작위 선택)
     st.session_state.question_list = random.sample(question_pool, 3)
