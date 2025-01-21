@@ -52,6 +52,10 @@ USER_NICKNAME = st.session_state.nickname  # 사용자 닉네임 저장
 USER_AVATAR = "👤"  # 사용자 아이콘 (URL 가능)
 AI_AVATAR = "📖"  # AI 아이콘 (URL 가능)
 
+# ✅ 후속 질문 기능을 위한 상태 초기화
+if "follow_up" not in st.session_state:
+    st.session_state.follow_up = None
+
 # ✅ 대화 이력 저장
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -179,10 +183,10 @@ user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하�
 
 # ✅ 버튼 클릭 시 자동 입력 + 질문 변경
 selected_question = None
-
-cols = st.columns(3)  # 👉 3열 배치 (총 9개 질문 버튼)
+# ✅ 3열 배치 (총 9개 질문 버튼)
+cols = st.columns(3)  
 for i, q in enumerate(st.session_state.question_list):
-    with cols[i % 3]:  # 3개씩 나눠서 정렬
+    with cols[i % 3]:  
         if st.button(q, use_container_width=True):
             selected_question = q
 
@@ -190,11 +194,25 @@ for i, q in enumerate(st.session_state.question_list):
 if selected_question or user_input:
     user_query = selected_question if selected_question else user_input
     st.session_state.messages.append({"role": "user", "content": user_query})
-    st.chat_message("user").write(user_query)
+    st.chat_message("user", avatar=USER_AVATAR).write(f"**[{USER_NICKNAME}]** {user_query}")
 
     # ✅ AI 응답 스트리밍 시작 (이전 대화 삭제 없이 유지)
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar=AI_AVATAR):
         st.write_stream(stream_bible_response(user_query))
+
+    # ✅ 후속 질문 버튼 추가 (초기 답변을 받은 후)
+    if st.button("🔍 이 주제 더 깊이 알아보기"):
+        st.session_state.follow_up = user_query
 
     # ✅ 새로운 질문 리스트 업데이트 (이전 대화 삭제 없음)
     st.session_state.question_list = random.sample(question_pool, 9)
+
+# ✅ 후속 질문 실행 (사용자가 버튼을 눌렀을 경우)
+if st.session_state.follow_up:
+    with st.chat_message("assistant", avatar=AI_AVATAR):
+        st.write_stream(stream_follow_up_response(st.session_state.follow_up))
+
+    # ✅ 추가적인 질문 유도 버튼 제공
+    if st.button("🔄 다른 관점에서 보기"):
+        st.session_state.follow_up = f"{st.session_state.follow_up} - 다른 관점에서 설명해 주세요."
+
