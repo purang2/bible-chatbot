@@ -6,6 +6,7 @@ import random
 
 # ✅ Streamlit 설정
 st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
+
 # ✅ Pretendard 폰트 적용 (CSS 삽입)
 st.markdown("""
     <style>
@@ -44,6 +45,7 @@ st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ 
 # ✅ OpenAI API 설정
 openai_api_key = st.secrets["chatgpt"]
 client = OpenAI(api_key=openai_api_key)
+
 # ✅ 닉네임 설정 (최초 실행 시 입력 가능)
 if "nickname" not in st.session_state:
     st.session_state.nickname = st.text_input("닉네임을 입력하세요:", value="성도님")
@@ -98,7 +100,7 @@ def stream_bible_response(user_query):
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# ✅ 질문 리스트 (150개)
+# ✅ 질문 리스트 (50개)
 question_pool = [
     # 🔹 인간관계 고민
     "가족과의 갈등을 어떻게 풀어야 할까요?",
@@ -161,7 +163,7 @@ question_pool = [
     "누군가에게 진짜 내 마음을 표현하는 게 어려워요."
 ]
 
-# ✅ 현재 표시할 질문 리스트 (세 개씩 랜덤 출력)
+# ✅ 현재 표시할 질문 리스트 (9개씩 랜덤 출력)
 if "question_list" not in st.session_state or not st.session_state.question_list:
     st.session_state.question_list = random.sample(question_pool, 9)
 
