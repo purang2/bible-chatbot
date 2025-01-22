@@ -1,4 +1,4 @@
-# LangChain for Bible Chatbot | 📖 Bible AI Chatbot 
+# LangChain for Bible Chatbot | [📖 Bible AI Chatbot](https://langchain-bible-chatbot.streamlit.app/)
 
 _A Conversational AI Chatbot for Personalized Bible Verse Recommendations_
 
