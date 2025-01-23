@@ -66,7 +66,7 @@ if "messages" not in st.session_state:
 # ✅ AI 응답 스트리밍 함수
 def stream_bible_response(user_query):
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": (
                 "너는 기독교 AI 챗봇이며, 반드시 개역성경 번역본을 정확하게 인용해야 한다.\n"
