@@ -78,12 +78,13 @@ def stream_bible_response(user_query):
                 "(예: '힘드셨겠네요.', '주님께서 함께 하십니다.')\n"
                 "4. 기독교적 존중을 담아 '성도님', '주님께서는...' 등의 표현을 활용하라.\n"
                 "5. 출처가 명확하지 않을 경우, 대표적인 구절(예: '시편 23편')을 추천하라."
+                "6. 구절의 본 의미를 해석해주며 덧붙여 작성하라."
             )},
             *st.session_state.messages,
             {"role": "user", "content": user_query}
         ],
-        max_tokens=700,
-        temperature=0.65,
+        max_tokens=300,
+        temperature=0.35,
         stream=True  # ✅ 스트리밍 활성화
     )
 
@@ -202,10 +203,6 @@ if selected_question or user_input:
     with st.chat_message("assistant", avatar=AI_AVATAR):
         st.write_stream(stream_bible_response(user_query))
 
-    # ✅ 후속 질문 버튼 추가 (초기 답변을 받은 후)
-    if st.button("🔍 이 주제 더 깊이 알아보기"):
-        st.session_state.follow_up = user_query
-
     # ✅ 새로운 질문 리스트 업데이트 (이전 대화 삭제 없음)
     st.session_state.question_list = random.sample(question_pool, 9)
 
@@ -214,7 +211,4 @@ if st.session_state.follow_up:
     with st.chat_message("assistant", avatar=AI_AVATAR):
         st.write_stream(stream_follow_up_response(st.session_state.follow_up))
 
-    # ✅ 추가적인 질문 유도 버튼 제공
-    if st.button("🔄 다른 관점에서 보기"):
-        st.session_state.follow_up = f"{st.session_state.follow_up} - 다른 관점에서 설명해 주세요."
 
