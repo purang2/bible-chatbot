@@ -86,7 +86,7 @@ def stream_bible_response(user_query):
             {"role": "user", "content": prefixed_query}
         ],
         max_tokens=500,
-        temperature=1.25,
+        temperature=0.55,
         stream=True  # ✅ 스트리밍 활성화
     )
 
