@@ -65,26 +65,19 @@ if "messages" not in st.session_state:
 
 # ✅ AI 응답 스트리밍 함수
 def stream_bible_response(user_query):
+    prefixed_query = (
+        "[개역성경 번역본]에서 정확한 인용과 출처(책 이름 장:절)를 명확히 표기하며, "
+        "공감하는 어조와 기독교적 존중을 담아 답변해 주세요.\n\n" + user_query
+    )
+
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": (
-                "너는 기독교 AI 챗봇이며, 반드시 개역성경 번역본을 정확하게 인용해야 한다.\n"
-                "1. 반드시 실제 존재하는 성경 구절의 **개역성경 번역본**만 제공하며, "
-                "구글 검색 시 한 글자도 틀리지 않고 개역성경 내용이 검색 결과에 나와야 한다. "
-                "반드시 (책 이름 장:절) 형식으로 출처를 정확히 표기하라.\n"
-                "2. 구절이 길 경우, 일부만 제공하고 '...'을 사용하되 출처는 명확히 표기하라.\n"
-                "3. 사용자에게 공감하는 어조를 유지하며, 짧은 위로 문장을 추가하라. "
-                "(예: '힘드셨겠네요.', '주님께서 함께 하십니다.')\n"
-                "4. 기독교적 존중을 담아 '성도님', '주님께서는...' 등의 표현을 활용하라.\n"
-                "5. 출처가 명확하지 않을 경우, 대표적인 구절(예: '시편 23편')을 추천하라."
-                "6. 구절의 본 의미를 해석해주며 덧붙여 작성하라."
-            )},
             *st.session_state.messages,
-            {"role": "user", "content": user_query}
+            {"role": "user", "content": prefixed_query}
         ],
-        max_tokens=300,
-        temperature=0.35,
+        max_tokens=500,
+        temperature=1.25,
         stream=True  # ✅ 스트리밍 활성화
     )
 
@@ -96,7 +89,7 @@ def stream_bible_response(user_query):
             if hasattr(delta, "content") and delta.content:
                 full_response += delta.content
                 yield delta.content  # ✅ 한 줄씩 반환
-                time.sleep(0.02)  # ✅ 응답 속도 조절
+                time.sleep(0.028)  # ✅ 응답 속도 조절
 
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
