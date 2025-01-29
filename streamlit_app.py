@@ -81,7 +81,7 @@ def stream_bible_response(user_query):
                 "(예: '힘드셨겠네요.', '주님께서 함께 하십니다.')\n"
                 "4. 기독교적 존중을 담아 '성도님', '주님께서는...' 등의 표현을 활용하라.\n"
                 "5. 구절의 본 의미를 신학 전공 전문가 목사님 처럼 해석해주며 덧붙여 작성하라."
-            )}
+            )},
             *st.session_state.messages,
             {"role": "user", "content": prefixed_query}
         ],
