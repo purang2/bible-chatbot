@@ -114,10 +114,10 @@ def replace_bible_references(text):
     return text
 
 def stream_bible_response(user_query):
+    # 8
     module1_response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "system", "content": (
-                """당신은 "성경 기반 영적/정서적 상담"에 특화된 챗봇입니다. 사용자의 감정, 상황, 혹은 주제/교리적 궁금증에 따라 적절한 성경 구절을 매칭하고, 성경적 관점(description)을 기반으로 위로와 통찰을 제공해 주세요.
+        messages=[{"role": "system", "content": """"당신은 "성경 기반 영적/정서적 상담"에 특화된 챗봇입니다. 사용자의 감정, 상황, 혹은 주제/교리적 궁금증에 따라 적절한 성경 구절을 매칭하고, 성경적 관점(description)을 기반으로 위로와 통찰을 제공해 주세요.
 아래에 제시된 분류 체계(30개 태그)는 크게 세 축으로 구성되어 있습니다.
 
 1) 감정 기반 (Emotion)
@@ -193,20 +193,15 @@ def stream_bible_response(user_query):
 [결론]
 
 위와 같은 프로세스를 통해, **사용자의 질문** → **감정/상황/교리 분류** → **관련 성경 구절 매칭** → **간결한 해설과 ‘성경적 관점’ 전달** 형식으로 **챗봇 대화**를 전개해 주세요. 모든 응답은 **안전, 존중, 은혜**를 최우선 가치로 삼아 작성하도록 합니다.
-"""
-            )},
-            *st.session_state.messages,
-            {"role": "user", "content": user_query}
-        ],
+"""},
+                  {"role": "user", "content": user_query}],
         max_tokens=700,
-        temperature=0.7,  # 일관성 유지 + 약간의 변동성
-        stream=True  # ✅ 스트리밍 활성화
-    )
-    
+        temperature=0.7
+    ).choices[0].message.content.strip()
+
     module2_response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "system", "content": (
-                 F"""
+        messages=[{"role": "system", "content": F"""
     당신은 “한줄성경” 프로젝트의 AI 챗봇의 모듈 2입니다. 
     모듈 2의 주요 임무는 아래 모듈 1의 정밀 분석 결과를 완전 반영하여 다정한 말투의 대답을 아래를 고려하며 제시해야 합니다.  
     
@@ -293,14 +288,9 @@ def stream_bible_response(user_query):
     1) **윤리**: 종교·문화 차이를 존중.  
     2) **지속성**: 사용자 후속 질문, 대화 히스토리를 반영해 일관된 톤 유지.  
     3) **결론**: 핵심은 “성경 구절 + 따뜻한 해설 + 한두 줄의 통합 메시지”입니다. 그럼으로써 사용자가 편안하고 희망 가득한 느낌을 받을 수 있습니다.
-    """
-            )},
-            *st.session_state.messages,
-            {"role": "user", "content": user_query}
-        ],
+    """],
         max_tokens=700,
-        temperature=0.7,  # 일관성 유지 + 약간의 변동성
-        stream=True  # ✅ 스트리밍 활성화
+        temperature=0.7
     ).choices[0].message.content.strip()
 
     # 성경 구절 추출 및 JSON 검색
@@ -334,7 +324,8 @@ def stream_bible_response(user_query):
         messages=[{"role": "system", "content": module3_prompt}],
         max_tokens=700,
         temperature=0.7
-    )
+    ).choices[0].message.content.strip()
+
 
     full_response = ""  # 전체 응답 저장
 
