@@ -62,6 +62,55 @@ if "follow_up" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# 성경 JSON 데이터 로드
+def load_bible_json():
+    with open("/data/bible.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+bible_data = load_bible_json()
+
+
+# 성경 책 이름 매핑 (축약 형태 변환)
+bible_book_map = {
+    "창세기": "창", "출애굽기": "출", "레위기": "레", "민수기": "민", "신명기": "신",
+    "여호수아": "수", "사사기": "삿", "룻기": "룻", "사무엘상": "삼상", "사무엘하": "삼하",
+    "열왕기상": "왕상", "열왕기하": "왕하", "역대상": "대상", "역대하": "대하",
+    "에스라": "스", "느헤미야": "느", "에스더": "에", "욥기": "욥", "시편": "시",
+    "잠언": "잠", "전도서": "전", "아가": "아", "이사야": "사", "예레미야": "렘",
+    "예레미야애가": "애", "에스겔": "겔", "다니엘": "단", "호세아": "호", "요엘": "욜",
+    "아모스": "암", "오바댜": "옵", "요나": "욘", "미가": "미", "나훔": "나",
+    "하박국": "합", "스바냐": "습", "학개": "학", "스가랴": "슥", "말라기": "말",
+    "마태복음": "마", "마가복음": "막", "누가복음": "눅", "요한복음": "요",
+    "사도행전": "행", "로마서": "롬", "고린도전서": "고전", "고린도후서": "고후",
+    "갈라디아서": "갈", "에베소서": "엡", "빌립보서": "빌", "골로새서": "골",
+    "데살로니가전서": "살전", "데살로니가후서": "살후", "디모데전서": "딤전",
+    "디모데후서": "딤후", "디도서": "딛", "빌레몬서": "몬", "히브리서": "히",
+    "야고보서": "약", "베드로전서": "벧전", "베드로후서": "벧후", "요한일서": "요일",
+    "요한이서": "요이", "요한삼서": "요삼", "유다서": "유", "요한계시록": "계"
+}
+
+# 성경 구절을 JSON 키 형식으로 변환하는 함수
+def format_bible_reference(reference):
+    match = re.match(r"([가-힣]+)\s?(\d+):(\d+)", reference)
+    if match:
+        book, chapter, verse = match.groups()
+        short_book = bible_book_map.get(book, book)  # 축약된 책 이름 찾기
+        return f"{short_book}{chapter}:{verse}"
+    return reference
+
+# JSON에서 성경 구절 검색
+def get_bible_verse(reference):
+    formatted_ref = format_bible_reference(reference)
+    return bible_data.get(formatted_ref, "(해당 번역을 찾을 수 없음)")
+
+# 성경 구절 자동 대체 함수
+def replace_bible_references(text):
+    for match in re.findall(r"[가-힣]+\s?\d+:\d+", text):
+        formatted_ref = format_bible_reference(match)
+        correct_translation = get_bible_verse(formatted_ref)
+        if correct_translation != "(해당 번역을 찾을 수 없음)":
+            text = text.replace(match, f"{match}: \"{correct_translation}\"")
+    return text
 
 def stream_bible_response(user_query):
     module1_response = client.chat.completions.create(
@@ -152,7 +201,7 @@ def stream_bible_response(user_query):
         temperature=0.7,  # 일관성 유지 + 약간의 변동성
         stream=True  # ✅ 스트리밍 활성화
     )
-    response = client.chat.completions.create(
+    raw_response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "system", "content": (
                  F"""
@@ -251,7 +300,7 @@ def stream_bible_response(user_query):
         temperature=0.7,  # 일관성 유지 + 약간의 변동성
         stream=True  # ✅ 스트리밍 활성화
     )
-
+    response = replace_bible_references(raw_response)
     full_response = ""  # 전체 응답 저장
 
     for chunk in response:
@@ -260,7 +309,7 @@ def stream_bible_response(user_query):
             if hasattr(delta, "content") and delta.content:
                 full_response += delta.content
                 yield delta.content  # ✅ 한 줄씩 반환
-                time.sleep(0.028)  # ✅ 응답 속도 조절
+                time.sleep(0.03)  # ✅ 응답 속도 조절
 
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
