@@ -64,7 +64,7 @@ if "messages" not in st.session_state:
 
 # 성경 JSON 데이터 로드
 def load_bible_json():
-    with open("/data/bible.json", "r", encoding="utf-8") as f:
+    with open("data/bible.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
 bible_data = load_bible_json()
