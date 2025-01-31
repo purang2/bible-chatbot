@@ -117,7 +117,7 @@ def stream_bible_response(user_query):
     # 8
     module1_response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "system", "content": """"당신은 "성경 기반 영적/정서적 상담"에 특화된 챗봇입니다. 사용자의 감정, 상황, 혹은 주제/교리적 궁금증에 따라 적절한 성경 구절을 매칭하고, 성경적 관점(description)을 기반으로 위로와 통찰을 제공해 주세요.
+        messages=[{"role": "system", "content": """당신은 "성경 기반 영적/정서적 상담"에 특화된 챗봇입니다. 사용자의 감정, 상황, 혹은 주제/교리적 궁금증에 따라 적절한 성경 구절을 매칭하고, 성경적 관점(description)을 기반으로 위로와 통찰을 제공해 주세요.
 아래에 제시된 분류 체계(30개 태그)는 크게 세 축으로 구성되어 있습니다.
 
 1) 감정 기반 (Emotion)
@@ -288,7 +288,7 @@ def stream_bible_response(user_query):
     1) **윤리**: 종교·문화 차이를 존중.  
     2) **지속성**: 사용자 후속 질문, 대화 히스토리를 반영해 일관된 톤 유지.  
     3) **결론**: 핵심은 “성경 구절 + 따뜻한 해설 + 한두 줄의 통합 메시지”입니다. 그럼으로써 사용자가 편안하고 희망 가득한 느낌을 받을 수 있습니다.
-    """],
+    """}],
         max_tokens=700,
         temperature=0.7
     ).choices[0].message.content.strip()
