@@ -202,7 +202,7 @@ def stream_bible_response(user_query):
         temperature=0.7,  # 일관성 유지 + 약간의 변동성
         stream=True  # ✅ 스트리밍 활성화
     )
-    raw_response = client.chat.completions.create(
+    module2_response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "system", "content": (
                  F"""
@@ -301,7 +301,40 @@ def stream_bible_response(user_query):
         temperature=0.7,  # 일관성 유지 + 약간의 변동성
         stream=True  # ✅ 스트리밍 활성화
     )
-    response = replace_bible_references(raw_response)
+
+    # 성경 구절 추출 및 JSON 검색
+    bible_references = re.findall(r"[가-힣]+\s?\d+:\d+", module2_response)
+    corrected_verses = {ref: get_bible_verse(ref) for ref in bible_references}
+
+    # 모듈 3: 성경 구절 수정 요청
+    module3_prompt = f"""
+    다음 성경 구절의 번역을 정확하게 수정해 주세요.
+
+    🎯 **수정 지침**
+    1. 원본 텍스트에서 잘못된 성경 구절을 **JSON 데이터에서 가져온 올바른 번역**으로 대체하세요.
+    2. 문장의 흐름과 맥락을 유지하되, 성경 구절은 **정확한 번역**으로 변경해야 합니다.
+    3. **기타 텍스트는 변경하지 말고 그대로 유지**하세요. (LLM이 새로 생성하지 않도록)
+    4. 수정할 부분을 제외한 나머지 텍스트는 **절대 변형하지 마세요.**
+
+    📜 **원본 텍스트**  
+    {module2_response}
+
+    📌 **JSON에서 가져온 정확한 성경 번역 목록**  
+    {corrected_verses}
+
+    🔄 **반영된 최종 수정본을 제공해 주세요.**  
+    - 원본 문장의 구조와 어투를 유지하세요.  
+    - 성경 구절만 올바른 번역으로 교체하세요.  
+    - 추가적인 내용 변경 없이, 필요한 부분만 수정하세요.  
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "system", "content": module3_prompt}],
+        max_tokens=700,
+        temperature=0.7
+    ).choices[0].message.content.strip()
+
     full_response = ""  # 전체 응답 저장
 
     for chunk in response:
