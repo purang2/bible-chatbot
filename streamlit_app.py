@@ -164,7 +164,7 @@ response = client.chat.completions.create(
 그 구절이 담고 있는 핵심적 메시지를 짧고 감성적으로 안내하여, 마음의 위로와 통찰을 얻도록 돕습니다.  
 
 ## 0. 모듈 1 분석 결과
-{CHATBOT_ANALYSIS}
+{module1_response}
 
 ## 1. 전체 톤 & 태도
 1) **따뜻하고 다정함**:  
