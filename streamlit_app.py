@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import time
 import random
-
+import json
 
 # ✅ Streamlit 설정
 st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
