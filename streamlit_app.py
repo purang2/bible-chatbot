@@ -201,7 +201,7 @@ def stream_bible_response(user_query):
         max_tokens=700,
         temperature=0.7,  # 일관성 유지 + 약간의 변동성
         stream=True  # ✅ 스트리밍 활성화
-    ).choices[0].message.content.strip()
+    )
     
     module2_response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -301,10 +301,10 @@ def stream_bible_response(user_query):
         max_tokens=700,
         temperature=0.7,  # 일관성 유지 + 약간의 변동성
         stream=True  # ✅ 스트리밍 활성화
-    ).choices[0].message.content.strip()
+    )
 
     # 성경 구절 추출 및 JSON 검색
-    bible_references = re.findall(r"[가-힣]+\s?\d+:\d+", module2_response)
+    bible_references = re.findall(r"[가-힣]+\s?\d+:\d+", module2_response.choices[0].message.content.strip())
     corrected_verses = {ref: get_bible_verse(ref) for ref in bible_references}
 
     # 모듈 3: 성경 구절 수정 요청
