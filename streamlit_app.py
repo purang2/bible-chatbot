@@ -304,7 +304,7 @@ def stream_bible_response(user_query):
     )
 
     # 성경 구절 추출 및 JSON 검색
-    bible_references = re.findall(r"[가-힣]+\s?\d+:\d+", module2_response.choices[0].message.content.strip())
+    bible_references = re.findall(r"[가-힣]+\s?\d+:\d+", module2_response)
     corrected_verses = {ref: get_bible_verse(ref) for ref in bible_references}
 
     # 모듈 3: 성경 구절 수정 요청
@@ -334,7 +334,7 @@ def stream_bible_response(user_query):
         messages=[{"role": "system", "content": module3_prompt}],
         max_tokens=700,
         temperature=0.7
-    ).choices[0].message.content.strip()
+    )
 
     full_response = ""  # 전체 응답 저장
 
