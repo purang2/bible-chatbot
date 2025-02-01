@@ -274,7 +274,7 @@ def module2(user_query):
                {"role": "user", "content": user_query}],
          max_tokens=700,
          temperature=0.7
-      ).choices[0].message.content.strip()
+      )
    
    return module2_response
    
@@ -307,8 +307,8 @@ def stream_bible_response(user_query):
     # 8
     module1_response = module1(user_query)
     module2_response = module2(module1_response)
-    response = replace_bible_references(module2_response)
-
+    module2_response.choices[0].message.content = replace_bible_references(module2_response.choices[0].message.content.strip())
+    response = module2_response
     full_response = ""  # 전체 응답 저장
 
     for chunk in response:
