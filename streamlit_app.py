@@ -306,9 +306,11 @@ def replace_bible_references(text):
 def stream_bible_response(user_query):
     # 8
     module1_response = module1(user_query)
-    module2_response = module2(module1_response)
-    module2_response.choices[0].message.content = replace_bible_references(module2_response.choices[0].message.content.strip())
-    response = module2_response
+    #module2_response = module2(module1_response)
+    #module2_response.choices[0].message.content = replace_bible_references(module2_response.choices[0].message.content.strip())
+    #response = module2_response
+    response = module1_response
+    
     full_response = ""  # 전체 응답 저장
 
     for chunk in response:
