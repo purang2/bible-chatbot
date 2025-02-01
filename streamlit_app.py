@@ -177,9 +177,8 @@ def module1(user_query):
                   """},
                {"role": "user", "content": user_query}],
         max_tokens=700,
-        temperature=0.7,
-       stream=True
-    )
+        temperature=0.7
+    ).choices[0].message.content.strip()
 
     
     return module1_response
@@ -308,10 +307,9 @@ def replace_bible_references(text):
 def stream_bible_response(user_query):
     # 8
     module1_response = module1(user_query)
-    #module2_response = module2(module1_response)
-    #module2_response.choices[0].message.content = replace_bible_references(module2_response.choices[0].message.content.strip())
-    #response = module2_response
-    response = module1_response
+    module2_response = module2(module1_response)
+    module2_response.choices[0].message.content = replace_bible_references(module2_response.choices[0].message.content.strip())
+    response = module2_response
     
     full_response = ""  # 전체 응답 저장
 
@@ -321,7 +319,7 @@ def stream_bible_response(user_query):
             if hasattr(delta, "content") and delta.content:
                 full_response += delta.content
                 yield delta.content  # ✅ 한 줄씩 반환
-                time.sleep(0.023)  # ✅ 응답 속도 조절
+                time.sleep(0.029)  # ✅ 응답 속도 조절
 
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
