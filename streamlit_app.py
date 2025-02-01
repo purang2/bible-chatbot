@@ -90,6 +90,32 @@ bible_book_map = {
     "요한이서": "요이", "요한삼서": "요삼", "유다서": "유", "요한계시록": "계"
 }
 
+
+
+# 성경 구절을 JSON 키 형식으로 변환하는 함수
+def format_bible_reference(reference):
+    match = re.match(r"([가-힣]+)\s?(\d+):(\d+)", reference)
+    if match:
+        book, chapter, verse = match.groups()
+        short_book = bible_book_map.get(book, book)  # 축약된 책 이름 찾기
+        return f"{short_book}{chapter}:{verse}"
+    return reference
+
+# JSON에서 성경 구절 검색
+def get_bible_verse(reference):
+    formatted_ref = format_bible_reference(reference)
+    return bible_data.get(formatted_ref, "(해당 번역을 찾을 수 없음)")
+
+# 성경 구절 자동 대체 함수
+def replace_bible_references(text):
+    for match in re.findall(r"[가-힣]+\s?\d+:\d+", text):
+        formatted_ref = format_bible_reference(match)
+        correct_translation = get_bible_verse(formatted_ref)
+        if correct_translation != "(해당 번역을 찾을 수 없음)":
+            text = text.replace(match, f"{match}: \"{correct_translation}\"")
+    return text
+
+
 def module1(user_query):
     # 8
     module1_response = client.chat.completions.create(
@@ -280,30 +306,6 @@ def module2(user_query):
    
    return module2_response
    
-
-# 성경 구절을 JSON 키 형식으로 변환하는 함수
-def format_bible_reference(reference):
-    match = re.match(r"([가-힣]+)\s?(\d+):(\d+)", reference)
-    if match:
-        book, chapter, verse = match.groups()
-        short_book = bible_book_map.get(book, book)  # 축약된 책 이름 찾기
-        return f"{short_book}{chapter}:{verse}"
-    return reference
-
-# JSON에서 성경 구절 검색
-def get_bible_verse(reference):
-    formatted_ref = format_bible_reference(reference)
-    return bible_data.get(formatted_ref, "(해당 번역을 찾을 수 없음)")
-
-# 성경 구절 자동 대체 함수
-def replace_bible_references(text):
-    for match in re.findall(r"[가-힣]+\s?\d+:\d+", text):
-        formatted_ref = format_bible_reference(match)
-        correct_translation = get_bible_verse(formatted_ref)
-        if correct_translation != "(해당 번역을 찾을 수 없음)":
-            text = text.replace(match, f"{match}: \"{correct_translation}\"")
-    return text
-
 
 def stream_bible_response(user_query):
     # 8
