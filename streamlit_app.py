@@ -179,7 +179,7 @@ def module1(user_query):
         max_tokens=700,
         temperature=0.7,
        stream=True
-    ).choices[0].message.content.strip()
+    )
 
     
     return module1_response
