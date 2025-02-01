@@ -321,7 +321,7 @@ def stream_bible_response(user_query):
             if hasattr(delta, "content") and delta.content:
                 full_response += delta.content
                 yield delta.content  # ✅ 한 줄씩 반환
-                time.sleep(0.029)  # ✅ 응답 속도 조절
+                time.sleep(0.099)  # ✅ 응답 속도 조절
 
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
