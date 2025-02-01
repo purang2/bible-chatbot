@@ -125,7 +125,7 @@ def module1(user_query):
                   3. **성경 구절 추천**  
                      - 사용자가 한글 독자일 경우 번역본(개역개정, 개정개역, NIV한영 등)을 자유롭게 인용해도 좋습니다.  
                      - 구절 전체를 길게 붙여넣기보다는 핵심 부분만 짧게 인용 가능.  
-                     - 필수적으로 ‘책, 장:절’을 정확히 표기.
+                     - 필수적으로 “(책 장:절) ‘구절 내용’…”을 정확히 표기.
 
                   4. **간단 해설 및 안내**  
                      - 선택된 구절에 대해 3~5줄 이내로, “왜 이 말씀이 해당 감정·상황·주제에 적용되는지”를 설명.  
@@ -180,6 +180,7 @@ def module1(user_query):
         temperature=0.7
     ).choices[0].message.content.strip()
 
+    module1_response.choices[0].message.content = replace_bible_references(module1_response.choices[0].message.content.strip())
     
     return module1_response
 
@@ -209,7 +210,7 @@ def module2(user_query):
       
       ## 2. 답변 구조:  
          - (a) **추천 성경구절** 2~3개  
-            - “(책 장:절) ‘구절 내용’…”  
+            - “(책 장:절) ‘구절 내용’…”  (모듈 1의 성경은 정확한 내용이므로 절대 글자 하나도 변형하지 말고 반드시 그대로 유지하여 출력하세요)
          - (b) **짧은 해설**  
             - 2~4줄 분량으로, 해당 구절이 왜 이 상황/감정에 적합한지, 어떻게 적용할 수 있는지.  
          - (c) **성경적 관점**  
@@ -308,7 +309,6 @@ def stream_bible_response(user_query):
     # 8
     module1_response = module1(user_query)
     module2_response = module2(module1_response)
-    module2_response.choices[0].message.content = replace_bible_references(module2_response.choices[0].message.content.strip())
     response = module2_response
     
     full_response = ""  # 전체 응답 저장
