@@ -177,7 +177,8 @@ def module1(user_query):
                   """},
                {"role": "user", "content": user_query}],
         max_tokens=700,
-        temperature=0.7
+        temperature=0.7,
+       stream=True
     ).choices[0].message.content.strip()
 
     
@@ -273,7 +274,8 @@ def module2(user_query):
       """},
                {"role": "user", "content": user_query}],
          max_tokens=700,
-         temperature=0.7
+         temperature=0.7,
+       stream=True
       )
    
    return module2_response
