@@ -423,6 +423,7 @@ user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하�
 # ✅ 3열 배치 (총 9개 질문 버튼) - 입력 필드 아래에 배치
 selected_question = None
 question_container = st.container()
+
 with question_container:
     cols = st.columns(3)  
     for i, q in enumerate(st.session_state.question_list):
@@ -442,10 +443,8 @@ if selected_question or user_input:
     with chat_container:
         st.chat_message("assistant", avatar=AI_AVATAR).write_stream(stream_bible_response(user_query))
 
-    # ✅ 새로운 질문 리스트 업데이트 (이전 대화 삭제 없음)
-    st.session_state.question_list = random.sample(question_pool, 9)
+    # ✅ 새로운 질문 리스트를 갱신하지 않음 (기존 질문 유지)
 
-# ✅ 후속 질문 실행 (사용자가 버튼을 눌렀을 경우)
-if st.session_state.follow_up:
-    with chat_container:
-        st.chat_message("assistant", avatar=AI_AVATAR).write_stream(stream_follow_up_response(st.session_state.follow_up))
+# ✅ 새로운 질문 리스트 갱신 버튼 (사용자가 원할 때만 변경)
+if st.button("🔄 새로운 질문 리스트 보기", use_container_width=True):
+    st.session_state.question_list = random.sample(question_pool, 9)
