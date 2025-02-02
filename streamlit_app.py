@@ -395,6 +395,7 @@ def stream_bible_response(user_query):
 
 ##### MAIN CHAT ENVIRONMENT ########
 
+
 # ✅ Streamlit 자동 스크롤 기능 추가 (JS 활용)
 def autoscroll():
     components.html("""
@@ -411,9 +412,9 @@ if "follow_up" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ✅ 원래대로 질문 리스트를 `question_pool`에서 가져오기
-if "question_list" not in st.session_state:
-    st.session_state.question_list = random.sample(question_pool, 9)  # 원래 코드 복원 ✅
+# ✅ 원래대로 질문 리스트를 유지
+if "question_list" not in st.session_state or not st.session_state.question_list:
+    st.session_state.question_list = random.sample(question_pool, 9)  # ✅ 원래 코드 복구
 
 # ✅ 채팅 UI 출력 (이전 대화 유지)
 st.subheader("📌 신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
@@ -454,16 +455,16 @@ if selected_question or user_input:
         st.chat_message("user").write(f"**[사용자]** {user_query}")
 
     # ✅ "💭 질문 생각 중..." 메시지를 질문 입력란 아래에 일시적으로 표시
-    loading_placeholder.markdown("💭 질문 생각 중...")
+    with loading_placeholder:
+        st.write("💭 질문 생각 중...")  # ✅ 일시적인 상태 표시
 
-    # ✅ AI 응답 시뮬레이션 (실제 API 호출 부분 대체 가능)
-    time.sleep(2)  # AI 응답 대기 시간
-    ai_response = f"**[한줄성경]** {user_query}에 대한 응답입니다. 하나님이 당신을 사랑하시고 인도하십니다."
+    # ✅ AI 응답 스트리밍 시작 (실제 AI API 호출)
+    response = stream_bible_response(user_query)  # ✅ 원래 API 호출 복구
 
     # ✅ 기존 "질문 생각 중..." 메시지를 AI 응답으로 교체
     loading_placeholder.empty()  # 💡 기존 메시지를 완전히 삭제
     with chat_container:
-        st.chat_message("assistant").write(ai_response)
+        st.chat_message("assistant").write_stream(response)  # ✅ 원래 스트리밍 출력
 
     # ✅ 자동 스크롤 적용 (새로운 메시지가 추가될 때)
     autoscroll()
@@ -472,5 +473,4 @@ if selected_question or user_input:
 
 # ✅ 새로운 질문 리스트 갱신 버튼 (사용자가 원할 때만 변경)
 if st.button("🔄 새로운 질문 리스트 보기", use_container_width=True):
-    st.session_state.question_list = random.sample(question_pool, 9)  # 원래대로 ✅
-
+    st.session_state.question_list = random.sample(question_pool, 9)  # ✅ 원래대로 유지
