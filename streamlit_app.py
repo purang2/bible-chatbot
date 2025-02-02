@@ -402,7 +402,7 @@ def stream_bible_response(user_query):
     # ✅ 카드 형태로 출력
     st.markdown(f"""
         <div class="chat-card">
-            <p>{full_response}</p>
+            <p>{response}</p>
         </div>
     """, unsafe_allow_html=True)
     # ✅ 응답 저장 (대화 내역 유지)
