@@ -38,6 +38,11 @@ st.markdown("""
             font-family: 'Pretendard', sans-serif !important;
             font-size: 14px;
         }
+        /* 성경 구절 강조 스타일 */
+        .highlight-scripture {
+            font-weight: bold;
+            color: gold;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -340,6 +345,13 @@ def replace_bible_references(text):
     return text
 
 
+
+def highlight_scripture(text):
+    """ 성경 구절을 감지하여 노란색 볼드체 클래스를 적용하는 함수 """
+    pattern = r"(\b[가-힣]+\s\d{1,3}:\d{1,3}\b)"  # 예: '전도서 4:9', '갈라디아서 6:2'
+    highlighted_text = re.sub(pattern, r"<span class='highlight-scripture'>\1</span>", text)
+    return highlighted_text
+
 def module1(user_query):
     # 8
     module1_response = client.chat.completions.create(
@@ -383,17 +395,19 @@ def stream_bible_response(user_query):
         if hasattr(chunk, "choices") and chunk.choices:
             delta = chunk.choices[0].delta
             if hasattr(delta, "content") and delta.content:
-                full_response += delta.content
-                yield delta.content  # ✅ 한 줄씩 반환
+                highlighted_content = highlight_scripture(delta.content)
+                full_response += highlighted_content
+                yield f"<div class='stChatMessage'>{highlighted_content}</div>"  # ✅ 한 줄씩 반환
                 time.sleep(0.02)  # ✅ 응답 속도 조절
+    
+    # ✅ 최종 응답을 Markdown으로 출력
+    st.markdown(f"<div class='stChatMessage'>{full_response}</div>", unsafe_allow_html=True)
 
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 
 
-
-##### MAIN CHAT ENVIRONMENT ########
 
 ##### MAIN CHAT ENVIRONMENT ########
 
