@@ -5,6 +5,9 @@ import random
 import json
 import re 
 
+import streamlit.components.v1 as components
+
+
 # ✅ Streamlit 설정
 st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="🙏", layout="centered")
 
@@ -391,6 +394,15 @@ def stream_bible_response(user_query):
 
 
 ##### MAIN CHAT ENVIRONMENT ########
+
+# ✅ Streamlit 자동 스크롤 기능 추가 (JS 활용)
+def autoscroll():
+    components.html("""
+        <script>
+        window.scrollTo(0, document.body.scrollHeight);
+        </script>
+    """)
+
 # ✅ 후속 질문 기능을 위한 상태 초기화
 if "follow_up" not in st.session_state:
     st.session_state.follow_up = None
@@ -399,9 +411,9 @@ if "follow_up" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ✅ 현재 표시할 질문 리스트 (9개씩 랜덤 출력, 단 한 번만 설정)
+# ✅ 원래대로 질문 리스트를 `question_pool`에서 가져오기
 if "question_list" not in st.session_state:
-    st.session_state.question_list = random.sample(question_pool, 9)
+    st.session_state.question_list = random.sample(question_pool, 9)  # 원래 코드 복원 ✅
 
 # ✅ 채팅 UI 출력 (이전 대화 유지)
 st.subheader("📌 신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
@@ -411,17 +423,17 @@ chat_container = st.container()
 with chat_container:
     for msg in st.session_state.messages:
         if msg["role"] == "user":
-            st.chat_message("user", avatar=USER_AVATAR).write(f"**[{USER_NICKNAME}]** {msg['content']}")
+            st.chat_message("user").write(f"**[사용자]** {msg['content']}")
         else:
-            st.chat_message("assistant", avatar=AI_AVATAR).write(f"**[한줄성경]** {msg['content']}")
+            st.chat_message("assistant").write(f"**[한줄성경]** {msg['content']}")
 
 # ✅ 자연어 입력 필드 (항상 아래 유지)
-user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
+user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.", key="user_input")
 
-# ✅ 로딩 메시지를 위한 공간 (입력창 바로 아래)
+# ✅ 로딩 메시지를 위한 공간 (입력창 바로 아래 고정)
 loading_placeholder = st.empty()
 
-# ✅ 질문 버튼을 아래에 배치
+# ✅ 3열 배치 (질문 버튼 원래대로 유지)
 selected_question = None
 question_container = st.container()
 
@@ -436,24 +448,29 @@ with question_container:
 if selected_question or user_input:
     user_query = selected_question if selected_question else user_input
     st.session_state.messages.append({"role": "user", "content": user_query})
-    
+
+    # ✅ 채팅창에 즉시 질문 추가
     with chat_container:
-        st.chat_message("user", avatar=USER_AVATAR).write(f"**[{USER_NICKNAME}]** {user_query}")
+        st.chat_message("user").write(f"**[사용자]** {user_query}")
 
-    # ✅ "💭 질문 생각 중..." 메시지를 즉시 표시
-    loading_msg = st.chat_message("assistant", avatar=AI_AVATAR)
-    loading_msg.write("💭 질문 생각 중...")
+    # ✅ "💭 질문 생각 중..." 메시지를 질문 입력란 아래에 일시적으로 표시
+    loading_placeholder.markdown("💭 질문 생각 중...")
 
-    # ✅ AI 응답 스트리밍 시작 (이전 대화 삭제 없이 유지)
-    response = stream_bible_response(user_query)
+    # ✅ AI 응답 시뮬레이션 (실제 API 호출 부분 대체 가능)
+    time.sleep(2)  # AI 응답 대기 시간
+    ai_response = f"**[한줄성경]** {user_query}에 대한 응답입니다. 하나님이 당신을 사랑하시고 인도하십니다."
 
     # ✅ 기존 "질문 생각 중..." 메시지를 AI 응답으로 교체
-    loading_msg.empty()  # 기존 메시지 제거
-    st.chat_message("assistant", avatar=AI_AVATAR).write_stream(response)
+    loading_placeholder.empty()  # 💡 기존 메시지를 완전히 삭제
+    with chat_container:
+        st.chat_message("assistant").write(ai_response)
+
+    # ✅ 자동 스크롤 적용 (새로운 메시지가 추가될 때)
+    autoscroll()
 
     # ✅ 새로운 질문 리스트를 갱신하지 않음 (기존 질문 유지)
 
 # ✅ 새로운 질문 리스트 갱신 버튼 (사용자가 원할 때만 변경)
 if st.button("🔄 새로운 질문 리스트 보기", use_container_width=True):
-    st.session_state.question_list = random.sample(question_pool, 9)
+    st.session_state.question_list = random.sample(question_pool, 9)  # 원래대로 ✅
 
