@@ -341,9 +341,10 @@ def module1(user_query):
     # 8
     module1_response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "system", 
-                   "content": PROMPT_1,
-               {"role": "user", "content": user_query}],
+        messages=[
+                {"role": "system", "content": PROMPT_1},
+                {"role": "user", "content": user_query}
+        ],
         max_tokens=700,
         temperature=0.7
     )
@@ -355,8 +356,10 @@ def module1(user_query):
 def module2(user_query):
    module2_response = client.chat.completions.create(
          model="gpt-4o-mini",
-         messages=[{"role": "system", "content": PROMPT_2},
-               {"role": "user", "content": user_query}],
+         messages=[
+             {"role": "system", "content": PROMPT_2},
+             {"role": "user", "content": user_query}
+         ],
          max_tokens=700,
          temperature=0.7,
        stream=True
