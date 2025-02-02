@@ -418,7 +418,7 @@ with chat_container:
 # ✅ 자연어 입력 필드 (항상 아래 유지)
 user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
 
-# ✅ 로딩 메시지를 질문 입력창 바로 아래에 배치
+# ✅ 로딩 메시지를 위한 공간 (입력창 바로 아래)
 loading_placeholder = st.empty()
 
 # ✅ 질문 버튼을 아래에 배치
@@ -440,16 +440,16 @@ if selected_question or user_input:
     with chat_container:
         st.chat_message("user", avatar=USER_AVATAR).write(f"**[{USER_NICKNAME}]** {user_query}")
 
-    # ✅ "💭 질문 생각 중..." 메시지를 질문 입력란 바로 아래에 표시
-    loading_placeholder.markdown("💭 생각 중...")
+    # ✅ "💭 질문 생각 중..." 메시지를 즉시 표시
+    loading_msg = st.chat_message("assistant", avatar=AI_AVATAR)
+    loading_msg.write("💭 질문 생각 중...")
 
     # ✅ AI 응답 스트리밍 시작 (이전 대화 삭제 없이 유지)
-    with chat_container:
-        response = stream_bible_response(user_query)
+    response = stream_bible_response(user_query)
 
-        # ✅ 기존 "질문 생각 중..." 메시지를 AI 응답으로 교체
-        loading_placeholder.empty()  # 기존 메시지 제거
-        st.chat_message("assistant", avatar=AI_AVATAR).write_stream(response)
+    # ✅ 기존 "질문 생각 중..." 메시지를 AI 응답으로 교체
+    loading_msg.empty()  # 기존 메시지 제거
+    st.chat_message("assistant", avatar=AI_AVATAR).write_stream(response)
 
     # ✅ 새로운 질문 리스트를 갱신하지 않음 (기존 질문 유지)
 
