@@ -38,6 +38,17 @@ st.markdown("""
             font-family: 'Pretendard', sans-serif !important;
             font-size: 14px;
         }
+        
+        /* 카드 디자인 */
+        .chat-card {
+            background: #fffdfa;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -387,6 +398,13 @@ def stream_bible_response(user_query):
                 yield delta.content  # ✅ 한 줄씩 반환
                 time.sleep(0.02)  # ✅ 응답 속도 조절
 
+    
+    # ✅ 카드 형태로 출력
+    st.markdown(f"""
+        <div class="chat-card">
+            <p>{full_response}</p>
+        </div>
+    """, unsafe_allow_html=True)
     # ✅ 응답 저장 (대화 내역 유지)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
