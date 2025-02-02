@@ -391,8 +391,6 @@ def stream_bible_response(user_query):
 
 
 ##### MAIN CHAT ENVIRONMENT ########
-
-
 # ✅ 후속 질문 기능을 위한 상태 초기화
 if "follow_up" not in st.session_state:
     st.session_state.follow_up = None
@@ -401,11 +399,11 @@ if "follow_up" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-
-# ✅ 현재 표시할 질문 리스트 (9개씩 랜덤 출력)
-if "question_list" not in st.session_state or not st.session_state.question_list:
+# ✅ 현재 표시할 질문 리스트 (9개씩 랜덤 출력, 단 한 번만 설정)
+if "question_list" not in st.session_state:
     st.session_state.question_list = random.sample(question_pool, 9)
 
+# ✅ 채팅 UI 출력 (이전 대화 유지)
 st.subheader("📌 신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
 
 chat_container = st.container()
@@ -439,12 +437,21 @@ if selected_question or user_input:
     with chat_container:
         st.chat_message("user", avatar=USER_AVATAR).write(f"**[{USER_NICKNAME}]** {user_query}")
 
+    # ✅ "💭 질문 생각 중..." 메시지 추가 (로딩 표시)
+    loading_message = st.chat_message("assistant", avatar=AI_AVATAR)
+    loading_message.write("💭 생각 중...")
+
     # ✅ AI 응답 스트리밍 시작 (이전 대화 삭제 없이 유지)
     with chat_container:
-        st.chat_message("assistant", avatar=AI_AVATAR).write_stream(stream_bible_response(user_query))
+        response = stream_bible_response(user_query)
+
+        # ✅ 기존 "질문 생각 중..." 메시지를 AI 응답으로 교체
+        loading_message.empty()  # 기존 메시지 제거
+        st.chat_message("assistant", avatar=AI_AVATAR).write_stream(response)
 
     # ✅ 새로운 질문 리스트를 갱신하지 않음 (기존 질문 유지)
 
 # ✅ 새로운 질문 리스트 갱신 버튼 (사용자가 원할 때만 변경)
 if st.button("🔄 새로운 질문 리스트 보기", use_container_width=True):
     st.session_state.question_list = random.sample(question_pool, 9)
+
