@@ -7,6 +7,7 @@ import re
 
 import streamlit.components.v1 as components
 
+st.set_page_config(page_title="📖 한줄성경 상담", page_icon="speech-bubble.png", layout="centered")
 
 # 1. 다국어 UI 텍스트 및 질문 리스트 사전
 LANG_TEXT = {
@@ -150,7 +151,7 @@ language_instruction = f"모든 응답은 반드시 {language_mapping[selected_l
 
 # ✅ Streamlit 설정
 #st.set_page_config(page_title="BibleGPT", page_icon="speech-bubble.png", layout="centered")
-st.set_page_config(page_title=f"📖 {lang_text['page_title']}", page_icon="speech-bubble.png", layout="centered")
+#st.set_page_config(page_title=f"📖 {lang_text['page_title']}", page_icon="speech-bubble.png", layout="centered")
 
 # ✅ 디자인
 st.markdown("""
