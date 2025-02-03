@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 
 # ✅ Streamlit 설정
-st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="speech-bubble.png", layout="centered")
+st.set_page_config(page_title="Bible AI Chatbot", page_icon="speech-bubble.png", layout="centered")
 
 # ✅ 디자인
 st.markdown("""
@@ -54,7 +54,7 @@ st.markdown("""
 
 
 # ✅ 타이틀 설정
-st.title("📖 Bible AI Chatbot")
+st.title("Bible AI Chatbot")
 st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**")
 
 # ✅ OpenAI API 설정
