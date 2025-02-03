@@ -429,7 +429,7 @@ if "messages" not in st.session_state:
 if "question_list" not in st.session_state or not st.session_state.question_list:
     st.session_state.question_list = random.sample(question_pool, 9)
 
-st.subheader("📌 신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
+st.subheader("신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
 
 chat_container = st.container()
 
