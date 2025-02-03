@@ -62,7 +62,7 @@ openai_api_key = st.secrets["chatgpt"]
 client = OpenAI(api_key=openai_api_key)
 
 
-PPROMPT_1 = """
+PROMPT_1 = """
 당신은 "성경 기반 영적/정서적 상담"에 특화된 챗봇입니다.
 사용자의 감정, 상황, 혹은 주제/교리적 궁금증에 따라 적절한 성경 구절을 매칭하고,
 성경적 관점(description)을 기반으로 위로와 통찰을 제공해 주세요.
