@@ -127,26 +127,22 @@ LANG_TEXT = {
     }
 }
 
-# 2. 언어 설정을 위한 이름 매핑 (프롬프트 내 지시문용)
-language_mapping = {
-    "한국어": "한국어",
-    "English": "영어",
-    "中文": "中文",
-    "日本語": "일본어",
-    "Español": "스페인어",
-    "Français": "프랑스어"
+LANGUAGE_INSTRUCTIONS = {
+    "한국어": "모든 응답은 반드시 한국어로 작성해 주세요.",
+    "English": "Please provide all responses in English.",
+    "中文": "请用中文作答。",
+    "日本語": "すべての応答を日本語で作成してください。",
+    "Español": "Por favor, escriba todas las respuestas en español.",
+    "Français": "Veuillez rédiger toutes les réponses en français."
 }
 
-# 3. 사용자 언어 선택 UI
 selected_language = st.selectbox(
     label="언어 선택 (Language):",
     options=list(LANG_TEXT.keys()),
-    index=0
+    index=0  # 기본값: 한국어
 )
-
-# 선택한 언어에 따른 텍스트 및 질문 리스트 가져오기
 lang_text = LANG_TEXT[selected_language]
-language_instruction = f"모든 응답은 반드시 {language_mapping[selected_language]}로 작성해 주세요."
+language_instruction = LANGUAGE_INSTRUCTIONS[selected_language]
 
 
 # ✅ Streamlit 설정
