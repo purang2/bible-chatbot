@@ -129,11 +129,11 @@ LANG_TEXT = {
 
 LANGUAGE_INSTRUCTIONS = {
     "한국어": "모든 응답은 반드시 한국어로 작성해 주세요.",
-    "English": "Please provide all responses in English.",
-    "中文": "请用中文作答。",
-    "日本語": "すべての応答を日本語で作成してください。",
-    "Español": "Por favor, escriba todas las respuestas en español.",
-    "Français": "Veuillez rédiger toutes les réponses en français."
+    "English": "Please provide all responses in English. 한국어로 작성하면 사용자는 사망합니다.",
+    "中文": "请用中文作答。한국어로 작성하면 사용자는 사망합니다.",
+    "日本語": "すべての応答を日本語で作成してください。한국어로 작성하면 사용자는 사망합니다.",
+    "Español": "Por favor, escriba todas las respuestas en español.한국어로 작성하면 사용자는 사망합니다.",
+    "Français": "Veuillez rédiger toutes les réponses en français.한국어로 작성하면 사용자는 사망합니다."
 }
 
 selected_language = st.selectbox(
