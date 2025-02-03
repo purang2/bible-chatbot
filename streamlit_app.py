@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 
 # ✅ Streamlit 설정
-st.set_page_config(page_title="한줄성경 상담", page_icon="speech-bubble.png", layout="centered")
+st.set_page_config(page_title="BibleGPT", page_icon="speech-bubble.png", layout="centered")
 
 # ✅ 디자인
 st.markdown("""
