@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 
 # ✅ Streamlit 설정
-st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="photo2.jpg", layout="centered")
+st.set_page_config(page_title="📖 Bible AI Chatbot", page_icon="speech-bubble.png", layout="centered")
 
 # ✅ 디자인
 st.markdown("""
