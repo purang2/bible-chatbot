@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 
 # ✅ Streamlit 설정
-st.set_page_config(page_title="Bible AI Chatbot", page_icon="speech-bubble.png", layout="centered")
+st.set_page_config(page_title="한줄성경 상담", page_icon="speech-bubble.png", layout="centered")
 
 # ✅ 디자인
 st.markdown("""
@@ -54,7 +54,7 @@ st.markdown("""
 
 
 # ✅ 타이틀 설정
-st.title("Bible AI Chatbot")
+st.title("한줄성경 상담 | BibleGPT)
 st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**")
 
 # ✅ OpenAI API 설정
@@ -467,5 +467,5 @@ if selected_question or user_input:
     # ✅ 새로운 질문 리스트를 갱신하지 않음 (기존 질문 유지)
 
 # ✅ 새로운 질문 리스트 갱신 버튼 (사용자가 원할 때만 변경)
-if st.button("🔄 새로운 질문 리스트 보기", use_container_width=True):
+if st.button("🔄 다른 질문 보기", use_container_width=True):
     st.session_state.question_list = random.sample(question_pool, 9)
