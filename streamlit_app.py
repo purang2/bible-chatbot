@@ -7,147 +7,9 @@ import re
 
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="한줄성경 상담", page_icon="speech-bubble.png", layout="centered")
-
-# 1. 다국어 UI 텍스트 및 질문 리스트 사전
-LANG_TEXT = {
-    "한국어": {
-        "page_title": "한줄성경 AI 챗봇",
-        "caption": "✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**",
-        "input_placeholder": "마음속 이야기를 적어주세요 (예: 하나님의 사랑을 더 알고 싶어요).",
-        "subheader": "📌 고민이 있으신가요? 마음의 이야기를 함께 나눠보세요.",
-        "question_list": [
-            "가족과의 갈등을 어떻게 풀어야 할까?",
-            "친구에게 상처를 받았을 때 어떻게 하면 좋을까?",
-            "배신당한 기분에서 벗어나려면 어떻게 해야 할까?",
-            "사람들에게 쉽게 마음을 열지 못하는데, 어떻게 하면 좋을까?",
-            "연인과의 관계에서 신뢰가 깨졌을 때 어떻게 해야 할까?",
-            "누군가를 용서하는 게 너무 어려운데, 방법이 있을까?",
-            "내가 너무 의존적인 관계를 맺고 있는 건 아닐까?",
-            "진정한 친구를 찾는 게 너무 어려워.",
-            "부모님과의 가치관 차이로 힘들 때 어떻게 해야 할까?",
-            "혼자가 편한데, 그래도 사람을 만나야 할까?"
-            # ... (추가 질문)
-        ]
-    },
-    "English": {
-        "page_title": "Bible AI Chatbot",
-        "caption": "Simple Chatbot Style | Real-time Responses | Accurate Bible Passages",
-        "input_placeholder": "Please type your thoughts (e.g., I want to know more about God's love).",
-        "subheader": "📌 Do you have any concerns? Share your thoughts with us.",
-        "question_list": [
-            "How can I resolve conflicts with my family?",
-            "What should I do when I'm hurt by a friend?",
-            "How can I overcome feelings of betrayal?",
-            "I have difficulty opening up to people; what should I do?",
-            "How can I restore trust in a relationship after being hurt?",
-            "Is there a way to forgive someone when it's very hard?",
-            "Am I too dependent in my relationships?",
-            "Finding true friends is so challenging.",
-            "How can I cope with value differences with my parents?",
-            "Is it better to be alone or to try meeting new people?"
-            # ... (추가 질문)
-        ]
-    },
-    "中文": {
-        "page_title": "圣经 AI 聊天机器人",
-        "caption": "简洁聊天机器人风格 | 实时响应 | 精确的圣经经文",
-        "input_placeholder": "请输入您的想法（例如：我想了解更多关于上帝之爱的事）。",
-        "subheader": "📌 您有任何疑虑吗？请与我们分享您的心声。",
-        "question_list": [
-            "如何解决与家人之间的冲突？",
-            "当朋友伤害我时，我该怎么办？",
-            "如何摆脱被背叛的感觉？",
-            "我很难向别人敞开心扉，该怎么办？",
-            "在感情中信任破裂后该如何修复？",
-            "原谅别人实在太难了，有什么方法吗？",
-            "我是不是太依赖别人了？",
-            "寻找真正的朋友真的很难。",
-            "与父母在价值观上有分歧时，我该如何应对？",
-            "我喜欢独处，但是否也需要与人交往？"
-            # ... (추가 질문)
-        ]
-    },
-    "日本語": {
-        "page_title": "バイブルAIチャットボット",
-        "caption": "シンプルなチャットボットスタイル | リアルタイム応答 | 正確な聖書の引用",
-        "input_placeholder": "ご意見を入力してください（例：神の愛についてもっと知りたいです）。",
-        "subheader": "📌 お悩みはありますか？あなたの思いを共有してください。",
-        "question_list": [
-            "家族との衝突をどう解決すべきか？",
-            "友達に傷つけられたとき、どうすればいいのか？",
-            "裏切りの感情からどう立ち直るか？",
-            "人に心を開くのが苦手なのですが、どうすればいいでしょうか？",
-            "恋人との信頼が壊れたらどう修復すればいいか？",
-            "誰かを許すのがとても難しいのですが、方法はあるでしょうか？",
-            "自分が依存的になっているのではないかと感じます。",
-            "本当の友達を見つけるのは難しいです。",
-            "親との価値観の違いに苦しむとき、どうすればいいか？",
-            "一人でいるのが好きですが、それでも人と出会うべきでしょうか？"
-            # ... (추가 질문)
-        ]
-    },
-    "Español": {
-        "page_title": "Bible AI Chatbot",
-        "caption": "Estilo sencillo de chatbot | Respuestas en tiempo real | Pasajes bíblicos precisos",
-        "input_placeholder": "Escriba sus pensamientos (ej.: Quiero saber más sobre el amor de Dios).",
-        "subheader": "📌 ¿Tienes alguna preocupación? Comparte tus pensamientos.",
-        "question_list": [
-            "¿Cómo puedo resolver los conflictos familiares?",
-            "¿Qué debo hacer cuando un amigo me lastima?",
-            "¿Cómo superar la sensación de traición?",
-            "Tengo dificultad para abrirme a la gente, ¿qué puedo hacer?",
-            "¿Cómo restaurar la confianza en una relación después de ser herido?",
-            "¿Existe alguna manera de perdonar cuando es muy difícil?",
-            "¿Estoy siendo demasiado dependiente en mis relaciones?",
-            "Encontrar un amigo verdadero es tan complicado.",
-            "¿Cómo afrontar las diferencias de valores con mis padres?",
-            "¿Es mejor estar solo o intentar relacionarse con otros?"
-            # ... (추가 질문)
-        ]
-    },
-    "Français": {
-        "page_title": "Chatbot Biblique IA",
-        "caption": "Style simple de chatbot | Réponses en temps réel | Passages bibliques précis",
-        "input_placeholder": "Tapez vos pensées (ex. : Je veux en savoir plus sur l'amour de Dieu).",
-        "subheader": "📌 Avez-vous des préoccupations ? Partagez vos pensées avec nous.",
-        "question_list": [
-            "Comment résoudre les conflits familiaux ?",
-            "Que faire lorsqu'un ami me blesse ?",
-            "Comment surmonter le sentiment de trahison ?",
-            "J'ai du mal à m'ouvrir aux autres, que puis-je faire ?",
-            "Comment rétablir la confiance dans une relation après une blessure ?",
-            "Est-il possible de pardonner quand c'est très difficile ?",
-            "Ne suis-je pas trop dépendant dans mes relations ?",
-            "Trouver un véritable ami est si difficile.",
-            "Comment gérer les différences de valeurs avec mes parents ?",
-            "Vaut-il mieux être seul ou essayer de rencontrer des gens ?"
-            # ... (추가 질문)
-        ]
-    }
-}
-
-LANGUAGE_INSTRUCTIONS = {
-    "한국어": "모든 응답은 반드시 한국어로 작성해 주세요.",
-    "English": "Please provide all responses in English. 한국어로 작성하면 사용자는 사망합니다.",
-    "中文": "请用中文作答。한국어로 작성하면 사용자는 사망합니다.",
-    "日本語": "すべての応答を日本語で作成してください。한국어로 작성하면 사용자는 사망합니다.",
-    "Español": "Por favor, escriba todas las respuestas en español.한국어로 작성하면 사용자는 사망합니다.",
-    "Français": "Veuillez rédiger toutes les réponses en français.한국어로 작성하면 사용자는 사망합니다."
-}
-
-selected_language = st.selectbox(
-    label="언어 선택 (Language):",
-    options=list(LANG_TEXT.keys()),
-    index=0  # 기본값: 한국어
-)
-lang_text = LANG_TEXT[selected_language]
-language_instruction = LANGUAGE_INSTRUCTIONS[selected_language]
-
 
 # ✅ Streamlit 설정
-#st.set_page_config(page_title="BibleGPT", page_icon="speech-bubble.png", layout="centered")
-#st.set_page_config(page_title=f"📖 {lang_text['page_title']}", page_icon="speech-bubble.png", layout="centered")
+st.set_page_config(page_title="Bible AI Chatbot", page_icon="speech-bubble.png", layout="centered")
 
 # ✅ 디자인
 st.markdown("""
@@ -191,17 +53,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
-
 # ✅ 타이틀 설정
-#st.title("BibleGPT")
-#st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**")
-
-st.title(f"📖 {lang_text['page_title']}")
-st.caption(lang_text["caption"])
-st.subheader(lang_text["subheader"])
-
-
+st.title("한줄성경 상담 | Bible AI Chatbot)
+st.caption("✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**")
 
 # ✅ OpenAI API 설정
 openai_api_key = st.secrets["chatgpt"]
@@ -210,9 +64,6 @@ client = OpenAI(api_key=openai_api_key)
 
 PROMPT_1 = """
 당신은 "성경 기반 영적/정서적 상담"에 특화된 챗봇입니다.
-
-{language_instruction}
-
 사용자의 감정, 상황, 혹은 주제/교리적 궁금증에 따라 적절한 성경 구절을 매칭하고, 성경적 관점(description)을 기반으로 위로와 통찰을 제공해 주세요.
 아래에 제시된 분류 체계(30개 태그)는 크게 세 축으로 구성되어 있습니다.
 
@@ -286,17 +137,10 @@ PROMPT_1 = """
 
 위 프로세스를 통해, 사용자의 질문 → 감정/상황/주제 및 일상 분류 → 관련 성경 구절 매칭 →
 간결한 해설과 ‘성경적 관점’ 전달 형식으로 챗봇 대화를 전개해 주세요.
-모든 응답은 안전, 존중, 은혜를 최우선 가치로 삼으며, 상황에 따라 유연한 언어 선택과 표현 조정을 반드시 반영해 주세요. 
-
-
-반드시 {language_instruction}
-"""
+모든 응답은 안전, 존중, 은혜를 최우선 가치로 삼으며, 상황에 따라 유연한 언어 선택과 표현 조정을 반드시 반영해 주세요. """
 
 PROMPT_2 = """
 당신은 “한줄성경” 프로젝트의 AI 챗봇 모듈 2입니다.
-
-{language_instruction}
-
 모듈 2의 주요 임무는 모듈 1의 정밀 분석 결과를 반영하여, 사용자의 상황과 맥락에 맞게 유연하게 응답하는 것입니다.
 아래의 지침을 참고하여 답변해 주세요.
 
@@ -341,7 +185,6 @@ PROMPT_2 = """
 3. 답변 스타일 상세
 ISFP-A / 유재석 톤:
 
-(아래는 예시다. 참고만 하면 된다.)
 “아, 그 마음 저도 충분히 이해해요. 정말 답답하셨겠어요.”
 “저도 비슷한 고민을 겪었을 때 큰 힘을 얻었던 구절이 있더라구요.”
 “우리 한번 이 말씀을 같이 살펴볼까요?”
@@ -368,7 +211,7 @@ AI 챗봇(당신):
 “이런 상황에서는 정말 마음이 복잡하시겠어요. 저도 그런 고민을 겪었을 때 큰 힘을 얻은 구절이 있더라구요.”
 
 [추천 성경구절]
-전도서 4:9 – “두 사람이 한 사람보다 나음은… 넘어졌을 때 일으켜 세워주기 때문이라.”
+전도서 4:9-10 – “두 사람이 한 사람보다 나음은… 넘어졌을 때 일으켜 세워주기 때문이라.”
 갈라디아서 6:2 – “너희가 서로의 짐을 지라 그리하여 그리스도의 법을 성취하라.”
 
 [짧은 해설]
@@ -382,11 +225,7 @@ AI 챗봇(당신):
 [추가 안내]
 먼저 가까운 가족이나 친구와 현재 고민을 나누어 보세요. 작은 한 걸음이 큰 변화를 만들어낼 수 있습니다.
 
-참고: 상황에 따라 답변의 길이, 순서, 강조점은 유연하게 조절 가능하며, 사용자의 구체적 상황에 맞게 내용을 변형해 주세요. 
-
-
-반드시 {language_instruction}
-"""
+참고: 상황에 따라 답변의 길이, 순서, 강조점은 유연하게 조절 가능하며, 사용자의 구체적 상황에 맞게 내용을 변형해 주세요. """
 
 
 
@@ -569,6 +408,9 @@ def stream_bible_response(user_query):
 
 
 
+
+##### MAIN CHAT ENVIRONMENT ########
+
 ##### MAIN CHAT ENVIRONMENT ########
 
 
@@ -585,7 +427,7 @@ if "messages" not in st.session_state:
 if "question_list" not in st.session_state or not st.session_state.question_list:
     st.session_state.question_list = random.sample(question_pool, 9)
 
-#st.subheader("신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
+st.subheader("신앙과 삶의 고민이 있다면, 마음을 나누어 보세요.")
 
 chat_container = st.container()
 
@@ -597,10 +439,7 @@ with chat_container:
             st.chat_message("assistant", avatar=AI_AVATAR).write(f"**[한줄성경]** {msg['content']}")
 
 # ✅ 자연어 입력 필드 (항상 아래 유지)
-#user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
-user_input = st.text_input(lang_text["input_placeholder"], placeholder=lang_text["input_placeholder"])
-
-
+user_input = st.text_input("질문을 입력하세요:", placeholder="예: 하나님을 신뢰하는 법을 알고 싶어요.")
 
 # ✅ 3열 배치 (총 9개 질문 버튼) - 입력 필드 아래에 배치
 selected_question = None
