@@ -12,7 +12,7 @@ st.set_page_config(page_title="한줄성경 상담", page_icon="speech-bubble.pn
 # 1. 다국어 UI 텍스트 및 질문 리스트 사전
 LANG_TEXT = {
     "한국어": {
-        "page_title": "한줄성경 상담",
+        "page_title": "한줄성경 AI 챗봇",
         "caption": "✅ **간결한 챗봇 스타일** | ✅ **실시간 응답** | ✅ **개역성경 정확성 보장** | ✅ **한국어 지원**",
         "input_placeholder": "마음속 이야기를 적어주세요 (예: 하나님의 사랑을 더 알고 싶어요).",
         "subheader": "📌 고민이 있으신가요? 마음의 이야기를 함께 나눠보세요.",
