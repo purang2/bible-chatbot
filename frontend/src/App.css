@@ -1,0 +1,36 @@
+.app-container {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  margin: 0 auto;
+  max-width: 100%;
+  position: relative;
+}
+
+/* 태블릿 크기 */
+@media (min-width: 768px) {
+  .app-container {
+    max-width: 600px;
+    height: 100vh;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 데스크톱 크기 */
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 768px;
+    height: 90vh; /* 화면 높이의 90%로 제한 */
+    margin: 2rem auto; /* 상하 여백 추가 */
+    border-radius: 1rem; /* 모서리 둥글게 */
+  }
+}
+
+/* 초대형 화면 */
+@media (min-width: 1440px) {
+  .app-container {
+    max-width: 900px;
+  }
+}
