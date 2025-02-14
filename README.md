@@ -16,6 +16,7 @@
 </div>
 
 
+
 ## Setting 
 
 ### 1. 환경 설정 (최초 1회)
@@ -64,6 +65,15 @@ OPENAI_API_KEY=your-api-key-here
 백엔드가 정상적으로 실행되면, Flask 서버가 `http://127.0.0.1:5000`에서 실행됩니다.
 
 프론트엔드를 실행하면 `http://localhost:3000`에서 챗봇 UI를 확인할 수 있습니다.
+
+
+## Main Architecture 
+
+<img width="1803" alt="Untitled (42)" src="https://github.com/user-attachments/assets/0136580d-3442-4787-aff0-a2b02b46de11" />
+
+
+
+
 
 
 ## Prompt Engineering
