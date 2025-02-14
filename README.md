@@ -15,6 +15,9 @@
  <img src="images/screen5.png" width="210px" style="margin: 0 10px" />
 </div>
 
+
+## Setting 
+
 ### 1. 환경 설정 (최초 1회)
 
 ```bash
@@ -63,6 +66,7 @@ OPENAI_API_KEY=your-api-key-here
 프론트엔드를 실행하면 `http://localhost:3000`에서 챗봇 UI를 확인할 수 있습니다.
 
 
+## Prompt Engineering
 
 ### 📖 SYSTEM PROMPT
 
