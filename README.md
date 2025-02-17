@@ -1,4 +1,4 @@
-# 📌 Bible Chatbot
+# 👨🏻‍🏫 Bible Chatbot
 
 <div align="center">
  <p>
